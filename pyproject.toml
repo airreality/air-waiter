@@ -1,0 +1,23 @@
+[project]
+name = "air-waiter"
+version = "0.1.0"
+description = "Waiter"
+authors = [
+    {name = "Anton Ryazantsev", email = "airunreality@gmail.com"}
+]
+maintainers = [
+    {name = "Anton Ryazantsev", email = "airunreality@gmail.com"}
+]
+license = {text = "MIT License"}
+readme = "README.md"
+requires-python = ">=3.12"
+urls.Source = "https://github.com/airreality/air-waiter"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "mypy>=1.13.0",
+    "pytest>=8.3.4",
+    "pytest-mock>=3.14.0",
+    "ruff>=0.8.2",
+]
