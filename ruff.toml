@@ -61,6 +61,7 @@ select = [
 ]
 
 ignore = [
+    "ANN401",  # Checks that function arguments are annotated with a more specific type than `Any`
     "D10",    # Undocumented
     "PT007",  # Wrong values type in `@pytest.mark.parametrize` expected `list` of `tuple`
     "PT019",  # Fixture without value is injected as parameter, use `@pytest.mark.usefixtures` instead
@@ -73,6 +74,7 @@ ignore = [
     "ARG002",  # Unused method argument
     "ARG004",  # Unused static method argument
     "FBT001",  # Boolean-typed positional argument in function definition
+    "SLF001",  # Checks for accesses on "private" class members
 ]
 "tests/unit/*" = [
     "PLC0415",  # `import` should be at the top-level of a file
