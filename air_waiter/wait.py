@@ -34,7 +34,7 @@ class Wait[T]:
         max_interval: float = 0,
         **kwargs: Any,
     ) -> None:
-        """Waiter logic class to call a callable until expected result.
+        """Waiter logic class to call a callable until the expected result.
 
         Waiter can be limited by timeout or/and by maximal calls count.
         If the remaining time till timeout is less then interval to sleep,
