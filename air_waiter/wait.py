@@ -128,4 +128,5 @@ class Wait[T]:
         # TODO: is it possible to constraint this method annotation that it never returns none?
         # without passing action as method argument?
         # action: Callable[..., T | None]
+        # https://github.com/airreality/air-waiter/issues/4
         return self._poll(predicate=partial(operator.is_not, None))
