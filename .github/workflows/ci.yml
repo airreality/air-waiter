@@ -35,14 +35,14 @@ jobs:
         run: |
           uv sync
 
-      - name: ruff check
+      - name: Check linting
         run: uv run ruff check --no-cache
 
-      - name: ruff format
+      - name: Check formatting
         run: uv run ruff format --check --no-cache
 
-      - name: mypy
+      - name: Check by static analyzer
         run: uv run mypy .
 
-      - name: tests
-        run: uv run pytest
+      - name: Run tests
+        run: uv run pytest --cov=air_waiter --cov-report=term-missing --cov-fail-under=100
