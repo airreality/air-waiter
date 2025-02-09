@@ -1,0 +1,44 @@
+---
+name: publish
+
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - main
+  workflow_dispatch:
+
+  release:
+    types:
+      - published
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: build
+    environment:
+      name: pypi
+      url: https://pypi.org/p/air-waiter
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install uv
+        id: setup-uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Build package
+        run: uv build
+
+      - name: Publish to PyPi
+        uses: pypa/gh-action-pypi-publish@release/v1
