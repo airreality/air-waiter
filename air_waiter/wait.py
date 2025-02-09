@@ -7,7 +7,7 @@ from functools import partial
 from time import sleep
 from typing import Any, Literal, TYPE_CHECKING
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Callable
 
 
