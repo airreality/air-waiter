@@ -31,3 +31,13 @@ types = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.mypy]
+exclude = ".venv"
+python_version = "3.12"
+
+follow_imports = "normal"
+ignore_missing_imports = false
+show_error_codes = true
+strict = true
+warn_unreachable = true
