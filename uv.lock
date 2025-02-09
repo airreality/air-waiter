@@ -16,6 +16,7 @@ dev = [
 ]
 types = [
     { name = "types-colorama" },
+    { name = "types-pexpect" },
     { name = "types-pygments" },
     { name = "types-setuptools" },
 ]
@@ -32,6 +33,7 @@ dev = [
 ]
 types = [
     { name = "types-colorama", specifier = ">=0.4.15.20240311" },
+    { name = "types-pexpect", specifier = ">=4.9.0.20241208" },
     { name = "types-pygments", specifier = ">=2.19.0.20250107" },
     { name = "types-setuptools", specifier = ">=75.8.0.20250110" },
 ]
@@ -224,6 +226,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/dd/df/64e7ab01a4fc5ce46895dc94e31cffc8b8087c8d91ee54c45ac2d8d82445/types_docutils-0.21.0.20241128.tar.gz", hash = "sha256:4dd059805b83ac6ec5a223699195c4e9eeb0446a4f7f2aeff1759a4a7cc17473", size = 26739 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/59/b6/10ba95739f2cbb9c5bd2f6568148d62b468afe01a94c633e8892a2936d8a/types_docutils-0.21.0.20241128-py3-none-any.whl", hash = "sha256:e0409204009639e9b0bf4521eeabe58b5e574ce9c0db08421c2ac26c32be0039", size = 34677 },
+]
+
+[[package]]
+name = "types-pexpect"
+version = "4.9.0.20241208"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/35/8b/2ac0c1db88bdc441d21477f151a074b1789aa3a4deac571b079a097bd987/types_pexpect-4.9.0.20241208.tar.gz", hash = "sha256:bbca0d0819947a719989a5cfe83641d9212bef893e2f0a7a01e47926bc82401d", size = 13222 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/37/c6/14c23e04bae6a83e051da86c1670684e59acadab333a8497384aa201defd/types_pexpect-4.9.0.20241208-py3-none-any.whl", hash = "sha256:1928f478528454f0fea3495c16cf1ee2e67fca5c9fe97d60b868ac48c1fd5633", size = 17085 },
 ]
 
 [[package]]
