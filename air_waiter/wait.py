@@ -28,7 +28,7 @@ class Wait[T]:
         *args: Any,
         timeout: float,
         max_attempts: int = 0,
-        exceptions_to_ignore: tuple[type[Exception]] = (),  # type: ignore[assignment]
+        exceptions_to_ignore: tuple[type[Exception], ...] = (),
         interval: float = 0.1,
         is_exponential: bool = False,
         max_interval: float = 0,
