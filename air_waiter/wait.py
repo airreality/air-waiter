@@ -32,6 +32,8 @@ class Wait[T]:
         interval: float = 0.1,
         is_exponential: bool = False,
         max_interval: float = 0,
+        timeout_message: str = "",
+        debug: bool = False,
         **kwargs: Any,
     ) -> None:
         """Waiter logic class to call a callable until the expected result.
@@ -50,6 +52,8 @@ class Wait[T]:
         :param is_exponential: Exponential waiter doubles interval after every call
         :param max_interval: Limit in seconds for the exponential waiter. Is used only with is_exponential = True.
             0 to ignore and increase interval endlessly
+        :param timeout_message: message in case of waiter is failed
+        :param debug: save all results of action while polling and show them in timeout exception if happens
         :param kwargs: Keyword args for the action
         """
         self._action = partial(action, *args, **kwargs)
@@ -67,14 +71,16 @@ class Wait[T]:
 
         self._is_exponential = is_exponential
         self._max_interval = max_interval
+        self._timeout_message = timeout_message
+        self._debug = debug
 
         self._calls_count = 0
         self._results: list[Any] | None = None
 
     def _poll(self, predicate: Callable[[T], bool]) -> T:
         self._calls_count = 0
-        self._results = []
-        assert self._results is not None
+        if self._debug:
+            self._results = []
 
         end_time = time.time() + self._timeout
 
@@ -96,11 +102,21 @@ class Wait[T]:
 
             with suppress(*self._exceptions_to_ignore):
                 result = self._action()
-                self._results.append(result)
+                if self._debug and self._results is not None:
+                    self._results.append(result)
                 if predicate(result):
                     return result
 
-        msg = f"Waiter timeout after {self._calls_count} action calls with results {self._results}"
+        msg_parts = [
+            msg_part
+            for msg_part in (
+                self._timeout_message,
+                f"Waiter timeout after {self._calls_count} action calls",
+                f"Results: {self._results}" if self._debug else "",
+            )
+            if msg_part
+        ]
+        msg = "\n".join(msg_parts)
         raise TimeoutError(msg)
 
     def until(self, predicate: Callable[[T], bool] | None = None) -> T:

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import time
 from typing import Any, TYPE_CHECKING
 
@@ -161,10 +162,37 @@ class TestWait:
             Wait(action_mock, timeout=0.01, is_exponential=False, max_interval=0.01)
 
     @staticmethod
-    def test_calls(mocker: MockFixture) -> None:
+    @pytest.mark.parametrize("timeout_message", ("", "message"))
+    @pytest.mark.parametrize("debug", (True, False))
+    def test_timeout_message(mocker: MockFixture, timeout_message: str, debug: bool) -> None:
+        results = [1, "2", True]
+        results_count = len(results)
+        expected_message = f"{timeout_message}\n" if timeout_message else ""
+        expected_message = f"{expected_message}Waiter timeout after {results_count} action calls"
+        if debug:
+            expected_message = f"{expected_message}\nResults: {results}"
+        expected_message = rf"^{re.escape(expected_message)}$"
+        action_mock = mocker.Mock(side_effect=results)
+        waiter = Wait(
+            action_mock, timeout=0, interval=0, max_attempts=results_count, timeout_message=timeout_message, debug=debug
+        )
+        with pytest.raises(TimeoutError, match=expected_message):
+            waiter.until_is_false()
+
+    @staticmethod
+    def test_calls_with_no_debug(mocker: MockFixture) -> None:
+        results = [0, 1, "", "1", (), (1,), False, None]
+        action_mock = mocker.Mock(side_effect=results)
+        waiter = Wait(action_mock, timeout=1, interval=0, debug=False)
+        waiter.until_is_none()
+        assert waiter._results is None
+        assert waiter._calls_count == len(results)
+
+    @staticmethod
+    def test_calls_with_debug(mocker: MockFixture) -> None:
         expected_results = [0, 1, "", "1", (), (1,), False, None]
         action_mock = mocker.Mock(side_effect=expected_results)
-        waiter = Wait(action_mock, timeout=1, interval=0)
+        waiter = Wait(action_mock, timeout=1, interval=0, debug=True)
         waiter.until_is_none()
         assert waiter._results == expected_results
         assert waiter._calls_count == len(expected_results)
