@@ -21,6 +21,10 @@ class UnusedMaxIntervalError(Exception):
         super().__init__("Wrong waiter configuration: max_interval should be used with is_exponential `True`")
 
 
+class WaiterTimeoutError(Exception):
+    pass
+
+
 class Wait[T]:
     def __init__(  # noqa: PLR0913
         self,
@@ -117,7 +121,7 @@ class Wait[T]:
             if msg_part
         ]
         msg = "\n".join(msg_parts)
-        raise TimeoutError(msg)
+        raise WaiterTimeoutError(msg)
 
     def until(self, predicate: Callable[[T], bool] | None = None) -> T:
         return self._poll(predicate=predicate or operator.truth)

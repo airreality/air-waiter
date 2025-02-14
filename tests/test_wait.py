@@ -6,7 +6,7 @@ from typing import Any, TYPE_CHECKING
 
 import pytest
 
-from air_waiter.wait import UnlimitedWaiterError, UnusedMaxIntervalError, Wait
+from air_waiter.wait import UnlimitedWaiterError, UnusedMaxIntervalError, Wait, WaiterTimeoutError
 
 if TYPE_CHECKING:
     from pytest_mock import MockFixture
@@ -37,7 +37,7 @@ class TestWait:
         action_mock = mocker.Mock(return_value=None)
 
         start = time.perf_counter()
-        with pytest.raises(TimeoutError):
+        with pytest.raises(WaiterTimeoutError):
             Wait(action_mock, timeout=timeout, interval=0).until()
 
         assert 0 <= time.perf_counter() - start - timeout <= MAX_THRESHOLD
@@ -46,7 +46,7 @@ class TestWait:
     @pytest.mark.parametrize("max_attempts", (2, 3))
     def test_max_attempts(mocker: MockFixture, max_attempts: int) -> None:
         action_mock = mocker.Mock(return_value=None)
-        with pytest.raises(TimeoutError):
+        with pytest.raises(WaiterTimeoutError):
             Wait(action_mock, timeout=1, interval=0, max_attempts=max_attempts).until()
 
         assert action_mock.call_count == max_attempts
@@ -67,7 +67,7 @@ class TestWait:
         action_mock = mocker.Mock(return_value=None)
 
         start = time.perf_counter()
-        with pytest.raises(TimeoutError):
+        with pytest.raises(WaiterTimeoutError):
             Wait(action_mock, timeout=timeout, interval=0, max_attempts=max_attempts).until()
 
         if is_timeout_reached:
@@ -109,7 +109,7 @@ class TestWait:
     def test_interval(mocker: MockFixture, interval: float, attempts: int) -> None:
         action_mock = mocker.Mock(return_value=False)
         start_time = time.perf_counter()
-        with pytest.raises(TimeoutError):
+        with pytest.raises(WaiterTimeoutError):
             Wait(action_mock, timeout=0, max_attempts=attempts, interval=interval).until()
 
         assert 0 <= time.perf_counter() - start_time - interval * attempts < MAX_THRESHOLD
@@ -125,7 +125,7 @@ class TestWait:
     def test_exponential_interval(mocker: MockFixture, interval: float, attempts: int, total_interval: float) -> None:
         action_mock = mocker.Mock(return_value=False)
         start_time = time.perf_counter()
-        with pytest.raises(TimeoutError):
+        with pytest.raises(WaiterTimeoutError):
             Wait(action_mock, timeout=0, max_attempts=attempts, interval=interval, is_exponential=True).until()
 
         assert 0 <= time.perf_counter() - start_time - total_interval < MAX_THRESHOLD
@@ -143,7 +143,7 @@ class TestWait:
     ) -> None:
         action_mock = mocker.Mock(return_value=False)
         start_time = time.perf_counter()
-        with pytest.raises(TimeoutError):
+        with pytest.raises(WaiterTimeoutError):
             Wait(
                 action_mock,
                 timeout=0,
@@ -176,7 +176,7 @@ class TestWait:
         waiter = Wait(
             action_mock, timeout=0, interval=0, max_attempts=results_count, timeout_message=timeout_message, debug=debug
         )
-        with pytest.raises(TimeoutError, match=expected_message):
+        with pytest.raises(WaiterTimeoutError, match=expected_message):
             waiter.until_is_false()
 
     @staticmethod
