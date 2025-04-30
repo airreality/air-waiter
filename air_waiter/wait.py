@@ -135,6 +135,12 @@ class Wait[T]:
     def until_not_equal_to(self, value: T) -> T:
         return self._poll(predicate=partial(operator.ne, value))
 
+    def until_is(self, value: T) -> T:
+        return self._poll(predicate=partial(operator.is_, value))
+
+    def until_is_not(self, value: T) -> T:
+        return self._poll(predicate=partial(operator.is_not, value))
+
     def until_is_true(self) -> Literal[True]:
         return self._poll(predicate=partial(operator.is_, True))  # type: ignore[return-value]  # noqa: FBT003
 

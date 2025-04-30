@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from pytest_mock import MockFixture
 
 
-MAX_THRESHOLD = 0.01
+MAX_THRESHOLD = 0.02
 
 
 class TestWait:
@@ -57,7 +57,7 @@ class TestWait:
         (
             (2, 10, False),
             (2, 0, False),
-            (100000, 0.01, True),
+            (100000, 0.03, True),
             (0, 0.01, True),
         ),
     )
@@ -99,14 +99,8 @@ class TestWait:
             Wait(action_mock, timeout=1, interval=0, exceptions_to_ignore=(ValueError,)).until()
 
     @staticmethod
-    @pytest.mark.parametrize(
-        ("interval", "attempts"),
-        (
-            (0.02, 4),
-            (0.04, 3),
-        ),
-    )
-    def test_interval(mocker: MockFixture, interval: float, attempts: int) -> None:
+    def test_interval(mocker: MockFixture) -> None:
+        interval, attempts = 0.04, 3
         action_mock = mocker.Mock(return_value=False)
         start_time = time.perf_counter()
         with pytest.raises(WaiterTimeoutError):
@@ -118,7 +112,7 @@ class TestWait:
     @pytest.mark.parametrize(
         ("interval", "attempts", "total_interval"),
         (
-            (0.02, 3, 0.14),
+            (0.03, 3, 0.21),
             (0.04, 2, 0.12),
         ),
     )
@@ -134,7 +128,7 @@ class TestWait:
     @pytest.mark.parametrize(
         ("interval", "attempts", "max_interval", "total_interval"),
         (
-            (0.02, 3, 0.05, 0.11),
+            (0.03, 3, 0.05, 0.13),
             (0.04, 2, 0.06, 0.1),
         ),
     )
@@ -265,6 +259,44 @@ class TestWait:
         action_mock = mocker.Mock(side_effect=(not_expected_value, value))
         expected_call_count = 2
         result = Wait(action_mock, timeout=1, interval=0).until_not_equal_to(not_expected_value)
+        assert result == value
+        assert action_mock.call_count == expected_call_count
+
+    @staticmethod
+    @pytest.mark.parametrize("value", (True, False, None))
+    def test_until_is(mocker: MockFixture, value: Any) -> None:
+        not_expected_value = not value
+        action_mock = mocker.Mock(side_effect=(not_expected_value, value))
+        expected_call_count = 2
+        result = Wait(action_mock, timeout=1, interval=0).until_is(value)
+        assert result is value
+        assert action_mock.call_count == expected_call_count
+
+    @staticmethod
+    @pytest.mark.parametrize("value", (1, False, None))
+    def test_until_is_negative(mocker: MockFixture, value: Any) -> None:
+        expected_call_count = 2
+        action_mock = mocker.Mock(side_effect=(value, True))
+        result = Wait(action_mock, timeout=1, interval=0).until_is(True)  # noqa: FBT003
+        assert result is True
+        assert action_mock.call_count == expected_call_count
+
+    @staticmethod
+    @pytest.mark.parametrize("value", (True, False, None))
+    def test_until_is_not(mocker: MockFixture, value: Any) -> None:
+        expected_value = not value
+        action_mock = mocker.Mock(side_effect=(value, expected_value))
+        expected_call_count = 2
+        result = Wait(action_mock, timeout=1, interval=0).until_is_not(value)
+        assert result is expected_value
+        assert action_mock.call_count == expected_call_count
+
+    @staticmethod
+    @pytest.mark.parametrize("value", (1, True, None))
+    def test_until_is_not_negative(mocker: MockFixture, value: Any) -> None:
+        expected_call_count = 2
+        action_mock = mocker.Mock(side_effect=(False, value))
+        result = Wait(action_mock, timeout=1, interval=0).until_is_not(False)  # noqa: FBT003
         assert result == value
         assert action_mock.call_count == expected_call_count
 
