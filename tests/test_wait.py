@@ -162,13 +162,38 @@ class TestWait:
         results = [1, "2", True]
         results_count = len(results)
         expected_message = f"{timeout_message}\n" if timeout_message else ""
-        expected_message = f"{expected_message}Waiter timeout after {results_count} action calls"
+        expected_message = (
+            f"{expected_message}Waiter timeout after {results_count} action calls\nLast result: {results[-1]}"
+        )
         if debug:
             expected_message = f"{expected_message}\nResults: {results}"
         expected_message = rf"^{re.escape(expected_message)}$"
         action_mock = mocker.Mock(side_effect=results)
         waiter = Wait(
             action_mock, timeout=0, interval=0, max_attempts=results_count, timeout_message=timeout_message, debug=debug
+        )
+        with pytest.raises(WaiterTimeoutError, match=expected_message):
+            waiter.until_is_false()
+
+    @staticmethod
+    @pytest.mark.parametrize("timeout_message", ("", "message"))
+    @pytest.mark.parametrize("debug", (True, False))
+    def test_timeout_message_no_result(mocker: MockFixture, timeout_message: str, debug: bool) -> None:
+        max_attempts = 3
+        expected_message = f"{timeout_message}\n" if timeout_message else ""
+        expected_message = f"{expected_message}Waiter timeout after {max_attempts} action calls"
+        if debug:
+            expected_message = f"{expected_message}\nResults: {[]}"
+        expected_message = rf"^{re.escape(expected_message)}$"
+        action_mock = mocker.Mock(side_effect=RuntimeError)
+        waiter = Wait(
+            action_mock,
+            timeout=0,
+            exceptions_to_ignore=(RuntimeError,),
+            interval=0,
+            max_attempts=max_attempts,
+            timeout_message=timeout_message,
+            debug=debug,
         )
         with pytest.raises(WaiterTimeoutError, match=expected_message):
             waiter.until_is_false()

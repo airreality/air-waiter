@@ -25,6 +25,10 @@ class WaiterTimeoutError(Exception):
     pass
 
 
+class NoResult:
+    pass
+
+
 class Wait[T]:
     def __init__(  # noqa: PLR0913
         self,
@@ -87,6 +91,7 @@ class Wait[T]:
             self._results = []
 
         end_time = time.time() + self._timeout
+        result: T | type[NoResult] = NoResult
 
         while True:
             remaining_time = end_time - time.time()
@@ -116,6 +121,7 @@ class Wait[T]:
             for msg_part in (
                 self._timeout_message,
                 f"Waiter timeout after {self._calls_count} action calls",
+                f"Last result: {result}" if result is not NoResult else "",
                 f"Results: {self._results}" if self._debug else "",
             )
             if msg_part
