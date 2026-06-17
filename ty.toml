@@ -1,0 +1,9 @@
+[rules]
+all = "error"
+
+[terminal]
+error-on-warning = true
+output-format = "concise"
+
+[analysis]
+respect-type-ignore-comments = false

@@ -6,7 +6,7 @@ from typing import Any, TYPE_CHECKING
 
 import pytest
 
-from air_waiter.wait import UnlimitedWaiterError, UnusedMaxIntervalError, Wait, WaiterTimeoutError
+from src.air_waiter.wait import UnlimitedWaiterError, UnusedMaxIntervalError, Wait, WaiterTimeoutError
 
 if TYPE_CHECKING:
     from pytest_mock import MockFixture
