@@ -148,13 +148,13 @@ class Wait[T]:
         return self._poll(predicate=partial(operator.is_not, value))
 
     def until_is_true(self) -> Literal[True]:
-        return self._poll(predicate=partial(operator.is_, True))  # type: ignore[return-value]  # noqa: FBT003
+        return self._poll(predicate=partial(operator.is_, True))  # noqa: FBT003  # ty: ignore[invalid-return-type]
 
     def until_is_false(self) -> Literal[False]:
-        return self._poll(predicate=partial(operator.is_, False))  # type: ignore[return-value]  # noqa: FBT003
+        return self._poll(predicate=partial(operator.is_, False))  # noqa: FBT003  # ty: ignore[invalid-return-type]
 
     def until_is_none(self) -> None:
-        return self._poll(predicate=partial(operator.is_, None))  # type: ignore[return-value]
+        return self._poll(predicate=partial(operator.is_, None))  # ty: ignore[invalid-return-type]
 
     def until_is_not_none(self) -> T:
         # TODO: is it possible to constraint this method annotation that it never returns none?
