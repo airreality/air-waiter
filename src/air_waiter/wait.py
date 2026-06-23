@@ -132,8 +132,8 @@ class Wait[T]:
     def until(self, predicate: Callable[[T], Any] | None = None) -> T:
         return self._poll(predicate=predicate or operator.truth)
 
-    def until_not(self) -> T:
-        return self._poll(predicate=operator.not_)
+    def until_not(self, predicate: Callable[[T], Any] | None = None) -> T:
+        return self._poll(predicate=(lambda x: not predicate(x)) if predicate is not None else operator.not_)
 
     def until_equal_to(self, value: T) -> T:
         return self._poll(predicate=partial(operator.eq, value))

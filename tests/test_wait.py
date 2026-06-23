@@ -259,6 +259,15 @@ class TestWait:
         assert action_mock.call_count == expected_call_count
 
     @staticmethod
+    def test_until_not_predicate(mocker: MockFixture) -> None:
+        expected_call_count = 2
+        expected_result = 2
+        action_mock = mocker.Mock(side_effect=(4, 2))
+        result = Wait(action_mock, timeout=1, interval=0).until_not(predicate=lambda x: x > 3)  # noqa: PLR2004
+        assert result == expected_result
+        assert action_mock.call_count == expected_call_count
+
+    @staticmethod
     @pytest.mark.parametrize("value", (1, "1", (1,), True))
     def test_until_not_negative(mocker: MockFixture, value: Any) -> None:
         expected_call_count = 2
