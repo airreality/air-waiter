@@ -85,7 +85,7 @@ class Wait[T]:
         self._calls_count = 0
         self._results: list[Any] | None = None
 
-    def _poll(self, predicate: Callable[[T], bool]) -> T:
+    def _poll(self, predicate: Callable[[T], Any]) -> T:
         self._calls_count = 0
         if self._debug:
             self._results = []
@@ -129,7 +129,7 @@ class Wait[T]:
         msg = "\n".join(msg_parts)
         raise WaiterTimeoutError(msg)
 
-    def until(self, predicate: Callable[[T], bool] | None = None) -> T:
+    def until(self, predicate: Callable[[T], Any] | None = None) -> T:
         return self._poll(predicate=predicate or operator.truth)
 
     def until_not(self) -> T:
